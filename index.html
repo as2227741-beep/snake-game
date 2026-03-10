@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SERPENT — Neon Snake</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="game-container">
+
+  <!-- HEADER -->
+  <div class="game-header">
+    <div class="game-title">SERPENT</div>
+    <div class="score-panel">
+      <div class="score-block">
+        <div class="score-label">Score</div>
+        <div class="score-value" id="scoreDisplay">0</div>
+      </div>
+      <div class="score-block">
+        <div class="score-label">Best</div>
+        <div class="score-value" id="bestDisplay">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- START OVERLAY -->
+    <div class="overlay" id="startOverlay">
+      <div class="overlay-icon">🐍</div>
+      <div class="overlay-title green">SERPENT</div>
+      <div class="overlay-sub">Navigate the neon grid.<br>Eat the orbs. Don't die.</div>
+      <button class="play-btn" onclick="startGame()">START GAME</button>
+      <div class="overlay-sub" style="font-size:10px">Arrow Keys · WASD · or D-Pad</div>
+    </div>
+
+    <!-- PAUSE OVERLAY -->
+    <div class="overlay hidden" id="pauseOverlay">
+      <div class="overlay-icon">⏸</div>
+      <div class="overlay-title cyan">PAUSED</div>
+      <button class="play-btn" onclick="togglePause()">RESUME</button>
+    </div>
+
+    <!-- GAME OVER OVERLAY -->
+    <div class="overlay hidden" id="gameOverOverlay">
+      <div class="overlay-icon">💀</div>
+      <div class="overlay-title red">GAME OVER</div>
+      <div class="final-score" id="finalScore">Score: <span>0</span></div>
+      <button class="play-btn" style="border-color:var(--danger);color:var(--danger);box-shadow:0 0 20px rgba(255,64,96,0.2)" onclick="startGame()">RETRY</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="game-footer">
+    <div class="controls-hint">WASD / ↑↓←→ · P to pause · ESC to restart</div>
+    <div class="level-display">
+      <div class="level-label">SPEED</div>
+      <div class="level-dots">
+        <div class="level-dot active" id="dot0"></div>
+        <div class="level-dot" id="dot1"></div>
+        <div class="level-dot" id="dot2"></div>
+        <div class="level-dot" id="dot3"></div>
+        <div class="level-dot" id="dot4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE D-PAD -->
+  <div class="dpad">
+    <button class="dpad-btn up" ontouchstart="dpadPress('UP')">▲</button>
+    <button class="dpad-btn left" ontouchstart="dpadPress('LEFT')">◀</button>
+    <button class="dpad-btn right" ontouchstart="dpadPress('RIGHT')">▶</button>
+    <button class="dpad-btn down" ontouchstart="dpadPress('DOWN')">▼</button>
+  </div>
+
+</div>
+
+<script src="node.js"></script>
+</body>
+</html>

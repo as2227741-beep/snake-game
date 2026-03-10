@@ -1,0 +1,203 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #050508;
+  --grid-line: rgba(0,255,180,0.04);
+  --neon: #00ffb3;
+  --neon2: #00e0ff;
+  --neon3: #ff3aff;
+  --danger: #ff4060;
+  --food: #ffcc00;
+  --text: #c8fff0;
+  --dim: #1a3028;
+}
+html, body {
+  height: 100%; width: 100%;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Animated grid bg */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,255,179,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.game-container {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px;
+}
+
+/* ── HEADER ── */
+.game-header {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 520px; padding: 0 4px;
+}
+.game-title {
+  font-size: 22px; font-weight: 900; letter-spacing: 0.2em;
+  color: var(--neon);
+  text-shadow: 0 0 10px var(--neon), 0 0 30px rgba(0,255,179,0.4);
+}
+.score-panel { display: flex; gap: 24px; }
+.score-block { text-align: right; }
+.score-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: 0.18em; color: rgba(0,255,179,0.4);
+  text-transform: uppercase; margin-bottom: 2px;
+}
+.score-value {
+  font-size: 20px; font-weight: 700; color: var(--neon);
+  text-shadow: 0 0 8px var(--neon);
+  transition: transform 0.1s;
+}
+.score-value.bump { animation: scoreBump 0.2s ease; }
+@keyframes scoreBump { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+/* ── CANVAS WRAP ── */
+.canvas-wrap {
+  position: relative;
+  border: 1px solid rgba(0,255,179,0.25);
+  box-shadow:
+    0 0 0 1px rgba(0,255,179,0.08),
+    0 0 40px rgba(0,255,179,0.08),
+    inset 0 0 60px rgba(0,0,0,0.8);
+  background: #030509;
+}
+.canvas-wrap::before,
+.canvas-wrap::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  border-color: var(--neon3);
+  border-style: solid;
+  z-index: 2;
+}
+.canvas-wrap::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.canvas-wrap::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+canvas { display: block; }
+
+/* ── OVERLAY (start / game over / pause) ── */
+.overlay {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px;
+  background: rgba(3,5,9,0.88);
+  backdrop-filter: blur(4px);
+  transition: opacity 0.3s;
+}
+.overlay.hidden { opacity: 0; pointer-events: none; }
+
+.overlay-icon { font-size: 56px; line-height: 1; animation: iconPulse 2s ease-in-out infinite; }
+@keyframes iconPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+.overlay-title {
+  font-size: 28px; font-weight: 900; letter-spacing: 0.15em;
+  text-align: center; line-height: 1.2;
+}
+.overlay-title.green { color: var(--neon); text-shadow: 0 0 20px var(--neon); }
+.overlay-title.red { color: var(--danger); text-shadow: 0 0 20px var(--danger); }
+.overlay-title.cyan { color: var(--neon2); text-shadow: 0 0 20px var(--neon2); }
+
+.overlay-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 0.1em; color: rgba(200,255,240,0.5);
+  text-align: center; line-height: 1.6;
+}
+
+.final-score {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px; letter-spacing: 0.1em; color: rgba(200,255,240,0.5);
+}
+.final-score span { color: var(--neon); font-size: 20px; }
+
+.play-btn {
+  padding: 14px 40px;
+  background: transparent;
+  border: 1px solid var(--neon);
+  color: var(--neon);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,255,179,0.2), inset 0 0 20px rgba(0,255,179,0.05);
+  transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.play-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(0,255,179,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.play-btn:hover { box-shadow: 0 0 30px rgba(0,255,179,0.4), inset 0 0 30px rgba(0,255,179,0.1); }
+.play-btn:hover::before { transform: translateX(100%); }
+.play-btn:active { transform: scale(0.97); }
+
+/* ── FOOTER / CONTROLS ── */
+.game-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 520px; padding: 0 4px;
+}
+.controls-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; color: rgba(0,255,179,0.25);
+}
+.level-display {
+  display: flex; align-items: center; gap: 8px;
+}
+.level-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; color: rgba(0,255,179,0.3);
+}
+.level-dots { display: flex; gap: 4px; }
+.level-dot {
+  width: 8px; height: 8px; border-radius: 1px;
+  background: var(--dim); transition: background 0.3s, box-shadow 0.3s;
+}
+.level-dot.active { background: var(--neon); box-shadow: 0 0 6px var(--neon); }
+
+/* ── MOBILE D-PAD ── */
+.dpad {
+  display: none;
+  grid-template-areas: ". up ." "left . right" ". down .";
+  grid-template-columns: repeat(3, 52px);
+  grid-template-rows: repeat(3, 52px);
+  gap: 6px;
+}
+.dpad-btn {
+  background: rgba(0,255,179,0.06);
+  border: 1px solid rgba(0,255,179,0.2);
+  color: var(--neon); font-size: 18px;
+  cursor: pointer; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s; -webkit-tap-highlight-color: transparent;
+}
+.dpad-btn:active { background: rgba(0,255,179,0.18); transform: scale(0.93); }
+.dpad-btn.up { grid-area: up; }
+.dpad-btn.down { grid-area: down; }
+.dpad-btn.left { grid-area: left; }
+.dpad-btn.right { grid-area: right; }
+
+@media (max-width: 580px) {
+  .dpad { display: grid; }
+  .controls-hint { display: none; }
+}
+@media (pointer: coarse) {
+  .dpad { display: grid; }
+  .controls-hint { display: none; }
+}
